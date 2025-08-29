@@ -1,12 +1,15 @@
 :root {
-    --primary-color: #3498db;
-    --secondary-color: #f39c12;
-    --text-color: #333;
-    --light-gray: #f5f5f5;
-    --medium-gray: #e0e0e0;
-    --dark-gray: #888;
+    --primary-color: #2c5aa0; /* Azul del logo */
+    --secondary-color: #ff6b35; /* Naranja del logo */
+    --accent-color: #4a90e2; /* Azul claro */
+    --text-color: #2c3e50; /* Negro/gris oscuro */
+    --light-gray: #f8f9fa;
+    --medium-gray: #6c757d; /* Gris medio */
+    --dark-gray: #495057; /* Gris oscuro */
     --white: #fff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow: 0 8px 25px rgba(44, 90, 160, 0.15);
+    --gradient-primary: linear-gradient(135deg, #2c5aa0 0%, #4a90e2 100%);
+    --gradient-secondary: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
 }
 
 body {
@@ -19,20 +22,35 @@ body {
 
 /* Login Page Styles */
 .login-page {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.login-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    pointer-events: none;
 }
 
 .login-container {
     background-color: var(--white);
-    border-radius: 10px;
+    border-radius: 20px;
     box-shadow: var(--shadow);
-    padding: 2rem;
+    padding: 3rem 2rem;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    border: 1px solid rgba(44, 90, 160, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .app-name {
@@ -48,32 +66,63 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    padding: 0.6rem;
+    background: var(--gradient-primary);
+    border: none;
+    padding: 0.75rem 1.5rem;
     font-weight: 600;
+    border-radius: 12px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 90, 160, 0.4);
+    background: linear-gradient(135deg, #1e3d72 0%, #3a7bc8 100%);
+}
+
+.btn-secondary {
+    background: var(--gradient-secondary);
+    border: none;
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    background: linear-gradient(135deg, #e55a2b 0%, #ff7849 100%);
+    color: var(--white);
 }
 
 /* Dashboard Styles */
 .sidebar {
-    background-color: var(--white);
+    background: var(--gradient-primary);
     box-shadow: var(--shadow);
     height: 100vh;
     position: fixed;
     width: 250px;
     z-index: 1000;
     transition: all 0.3s;
+    border-right: 3px solid var(--secondary-color);
 }
 
 .sidebar-header {
     padding: 1.5rem;
-    border-bottom: 1px solid var(--medium-gray);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.sidebar-header .app-name {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-menu {
@@ -81,21 +130,29 @@ body {
 }
 
 .sidebar-menu .nav-link {
-    color: var(--text-color);
-    padding: 0.8rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     transition: all 0.3s;
+    border-radius: 0 25px 25px 0;
+    margin: 0.2rem 0;
+    margin-right: 1rem;
+    text-decoration: none;
 }
 
 .sidebar-menu .nav-link:hover {
-    background-color: var(--light-gray);
-    color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-menu .nav-link.active {
-    background-color: var(--primary-color);
+    background: var(--gradient-secondary);
     color: var(--white);
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
 }
 
 .sidebar-menu .nav-link i {
@@ -111,14 +168,15 @@ body {
 }
 
 .top-bar {
-    background-color: var(--white);
+    background: var(--white);
     box-shadow: var(--shadow);
-    padding: 1rem 2rem;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    border-radius: 8px;
+    border-radius: 15px;
+    border-left: 4px solid var(--secondary-color);
 }
 
 .module-title {
@@ -141,9 +199,16 @@ body {
 
 .card {
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: var(--shadow);
     margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(44, 90, 160, 0.2);
 }
 
 .card-header {
@@ -159,9 +224,12 @@ body {
 }
 
 .summary-card .icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .summary-card .amount {
@@ -180,19 +248,52 @@ body {
 }
 
 .btn-action {
-    margin-right: 0.5rem;
-    padding: 0.5rem 1rem;
+    margin-right: 0.75rem;
+    padding: 0.75rem 1.25rem;
     display: inline-flex;
     align-items: center;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 .btn-action i {
     margin-right: 0.5rem;
 }
 
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 90, 160, 0.3);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--gradient-secondary);
+    border-color: var(--secondary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+}
+
 .table-responsive {
-    border-radius: 8px;
+    border-radius: 15px;
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 .table {
@@ -200,9 +301,24 @@ body {
 }
 
 .table th {
-    background-color: var(--light-gray);
+    background: var(--gradient-primary);
+    color: var(--white);
     font-weight: 600;
     border-top: none;
+    padding: 1rem;
+    text-align: center;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: rgba(44, 90, 160, 0.1);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(44, 90, 160, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
 }
 
 .currency-toggle {
@@ -227,10 +343,29 @@ body {
 /* Form styles */
 .form-container {
     background-color: var(--white);
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: var(--shadow);
-    padding: 1.5rem;
+    padding: 2rem;
     margin-bottom: 1.5rem;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 2px solid var(--light-gray);
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
 }
 
 /* Responsive adjustments */

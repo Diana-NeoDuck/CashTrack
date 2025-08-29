@@ -16,5 +16,4 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Export Firebase services
-export { auth, db };
+// Firebase services are now available globally as auth and db
