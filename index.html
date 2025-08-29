@@ -18,10 +18,10 @@
             <div class="login-form">
                 <form id="loginForm" action="dashboard.html">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Usuario</label>
+                        <label for="username" class="form-label">Correo electrónico</label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" class="form-control" id="username" required>
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="username" required>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -35,8 +35,69 @@
                         <input type="checkbox" class="form-check-input" id="rememberMe">
                         <label class="form-check-label" for="rememberMe">Recordarme</label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" id="registerBtn" class="btn btn-outline-secondary">Registrarse</button>
+                        <button type="button" id="forgotPasswordBtn" class="btn btn-outline-secondary">Olvidé mi contraseña</button>
+                    </div>
                 </form>
+            </div>
+            
+            <!-- Modal de Registro -->
+            <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="registerModalLabel">Registro de Usuario</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="registerForm">
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="registerEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="registerPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="createAccountBtn" class="btn btn-primary">Crear Cuenta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal de Recuperación de Contraseña -->
+            <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="forgotPasswordModalLabel">Recuperar Contraseña</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="forgotPasswordForm">
+                                <div class="mb-3">
+                                    <label for="resetEmail" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="resetEmail" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="resetPasswordBtn" class="btn btn-primary">Enviar Enlace</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
