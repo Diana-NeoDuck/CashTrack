@@ -1,0 +1,21 @@
+{
+  "name": "cashtrack",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de caja chica",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "cashtrack",
+    "caja",
+    "finanzas",
+    "gestión"
+  ],
+  "author": "Diana",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}

@@ -1,14 +1,296 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar si el usuario está autenticado
-    const user = JSON.parse(localStorage.getItem('cashtrack_user') || '{}');
-    if (!user.username) {
-        window.location.href = 'index.html';
-        return;
+    // Verificar si el usuario está autenticado con Firebase
+    firebase.auth().onAuthStateChanged(function(firebaseUser) {
+        if (!firebaseUser) {
+            // No autenticado, redirigir al login
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // Usuario autenticado, obtener datos adicionales
+        const user = JSON.parse(localStorage.getItem('cashtrack_user') || '{}');
+        
+        // Mostrar información del usuario
+        document.getElementById('user-name').textContent = user.name || firebaseUser.email;
+        document.getElementById('user-role').textContent = user.role || 'Usuario';
+        
+        // Cargar datos del usuario desde Firebase
+        loadUserData(firebaseUser.uid);
+    });
+    
+    // Función para cargar datos del usuario desde Firebase
+    function loadUserData(userId) {
+        // Referencia a los datos del usuario en Firebase
+        const userRef = firebase.database().ref('users/' + userId);
+        
+        // Cargar datos iniciales
+        loadInitialCash(userId);
+        loadSales(userId);
+        loadExpenses(userId);
+        loadAdjustments(userId);
+        loadCustomers(userId);
+        loadInventory(userId);
+        updateDashboardSummary(userId);
     }
-
-    // Mostrar información del usuario
-    document.getElementById('user-name').textContent = user.name || 'Usuario';
-    document.getElementById('user-role').textContent = user.role || 'Usuario';
+    
+    // Funciones para cargar datos desde Firebase
+    function loadInitialCash(userId) {
+        const initialCashRef = firebase.database().ref('users/' + userId + '/initialCash');
+        initialCashRef.on('value', (snapshot) => {
+            const data = snapshot.val() || {};
+            const initialCashAmount = data.amount || 0;
+            document.getElementById('initial-cash-amount').value = initialCashAmount;
+            updateCashSummary();
+        });
+    }
+    
+    function loadSales(userId) {
+        const salesRef = firebase.database().ref('users/' + userId + '/sales');
+        salesRef.on('value', (snapshot) => {
+            const salesData = snapshot.val() || {};
+            const salesTable = document.getElementById('sales-table-body');
+            salesTable.innerHTML = '';
+            
+            let totalSales = 0;
+            
+            Object.keys(salesData).forEach(key => {
+                const sale = salesData[key];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.date}</td>
+                    <td>${sale.customer}</td>
+                    <td>${sale.description}</td>
+                    <td class="text-end">${formatCurrency(sale.amount)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary print-invoice" data-id="${key}">
+                            <i class="fas fa-print"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-sale" data-id="${key}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                salesTable.appendChild(row);
+                totalSales += parseFloat(sale.amount);
+            });
+            
+            document.getElementById('total-sales').textContent = formatCurrency(totalSales);
+            updateCashSummary();
+        });
+    }
+    
+    function loadExpenses(userId) {
+        const expensesRef = firebase.database().ref('users/' + userId + '/expenses');
+        expensesRef.on('value', (snapshot) => {
+            const expensesData = snapshot.val() || {};
+            const expensesTable = document.getElementById('expenses-table-body');
+            expensesTable.innerHTML = '';
+            
+            let totalExpenses = 0;
+            
+            Object.keys(expensesData).forEach(key => {
+                const expense = expensesData[key];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${expense.date}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.description}</td>
+                    <td class="text-end">${formatCurrency(expense.amount)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger delete-expense" data-id="${key}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                expensesTable.appendChild(row);
+                totalExpenses += parseFloat(expense.amount);
+            });
+            
+            document.getElementById('total-expenses').textContent = formatCurrency(totalExpenses);
+            updateCashSummary();
+        });
+    }
+    
+    function loadAdjustments(userId) {
+        const adjustmentsRef = firebase.database().ref('users/' + userId + '/adjustments');
+        adjustmentsRef.on('value', (snapshot) => {
+            const adjustmentsData = snapshot.val() || {};
+            const adjustmentsTable = document.getElementById('adjustments-table-body');
+            adjustmentsTable.innerHTML = '';
+            
+            let totalAdjustments = 0;
+            
+            Object.keys(adjustmentsData).forEach(key => {
+                const adjustment = adjustmentsData[key];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${adjustment.date}</td>
+                    <td>${adjustment.type}</td>
+                    <td>${adjustment.description}</td>
+                    <td class="text-end">${formatCurrency(adjustment.amount)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger delete-adjustment" data-id="${key}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                adjustmentsTable.appendChild(row);
+                totalAdjustments += parseFloat(adjustment.amount);
+            });
+            
+            document.getElementById('total-adjustments').textContent = formatCurrency(totalAdjustments);
+            updateCashSummary();
+        });
+    }
+    
+    // Actualizar caja final
+    function updateCashSummary() {
+        const initialCash = parseFloat(document.getElementById('initial-cash-amount').value) || 0;
+        const totalSales = parseFloat(document.getElementById('total-sales').textContent.replace(/[^\d.-]/g, '')) || 0;
+        const totalExpenses = parseFloat(document.getElementById('total-expenses').textContent.replace(/[^\d.-]/g, '')) || 0;
+        const totalAdjustments = parseFloat(document.getElementById('total-adjustments').textContent.replace(/[^\d.-]/g, '')) || 0;
+        
+        const finalCash = initialCash + totalSales + totalAdjustments - totalExpenses;
+        document.getElementById('final-cash').textContent = formatCurrency(finalCash);
+        
+        // Actualizar gráficos
+        updateCharts(initialCash, totalSales, totalExpenses, totalAdjustments);
+    }
+    
+    // Funciones para guardar datos en Firebase
+    function saveInitialCash() {
+        const userId = firebase.auth().currentUser.uid;
+        const amount = parseFloat(document.getElementById('initial-cash-amount').value) || 0;
+        const date = new Date().toISOString().split('T')[0];
+        
+        firebase.database().ref('users/' + userId + '/initialCash').set({
+            amount: amount,
+            date: date,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            showAlert('Caja inicial guardada correctamente', 'success');
+            updateCashSummary();
+        }).catch(error => {
+            console.error('Error al guardar caja inicial:', error);
+            showAlert('Error al guardar caja inicial', 'danger');
+        });
+    }
+    
+    function saveSale() {
+        const userId = firebase.auth().currentUser.uid;
+        const saleForm = document.getElementById('sale-form');
+        
+        const customer = document.getElementById('sale-customer').value;
+        const description = document.getElementById('sale-description').value;
+        const amount = parseFloat(document.getElementById('sale-amount').value) || 0;
+        const date = document.getElementById('sale-date').value || new Date().toISOString().split('T')[0];
+        
+        if (!customer || !description || amount <= 0) {
+            showAlert('Por favor complete todos los campos correctamente', 'warning');
+            return;
+        }
+        
+        const newSaleRef = firebase.database().ref('users/' + userId + '/sales').push();
+        
+        newSaleRef.set({
+            customer: customer,
+            description: description,
+            amount: amount,
+            date: date,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            showAlert('Venta registrada correctamente', 'success');
+            saleForm.reset();
+            $('#saleModal').modal('hide');
+        }).catch(error => {
+            console.error('Error al guardar venta:', error);
+            showAlert('Error al guardar venta', 'danger');
+        });
+    }
+    
+    function saveExpense() {
+        const userId = firebase.auth().currentUser.uid;
+        const expenseForm = document.getElementById('expense-form');
+        
+        const category = document.getElementById('expense-category').value;
+        const description = document.getElementById('expense-description').value;
+        const amount = parseFloat(document.getElementById('expense-amount').value) || 0;
+        const date = document.getElementById('expense-date').value || new Date().toISOString().split('T')[0];
+        
+        if (!category || !description || amount <= 0) {
+            showAlert('Por favor complete todos los campos correctamente', 'warning');
+            return;
+        }
+        
+        const newExpenseRef = firebase.database().ref('users/' + userId + '/expenses').push();
+        
+        newExpenseRef.set({
+            category: category,
+            description: description,
+            amount: amount,
+            date: date,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            showAlert('Gasto registrado correctamente', 'success');
+            expenseForm.reset();
+            $('#expenseModal').modal('hide');
+        }).catch(error => {
+            console.error('Error al guardar gasto:', error);
+            showAlert('Error al guardar gasto', 'danger');
+        });
+    }
+    
+    function saveAdjustment() {
+        const userId = firebase.auth().currentUser.uid;
+        const adjustmentForm = document.getElementById('adjustment-form');
+        
+        const type = document.getElementById('adjustment-type').value;
+        const description = document.getElementById('adjustment-description').value;
+        const amount = parseFloat(document.getElementById('adjustment-amount').value) || 0;
+        const date = document.getElementById('adjustment-date').value || new Date().toISOString().split('T')[0];
+        
+        if (!type || !description || amount === 0) {
+            showAlert('Por favor complete todos los campos correctamente', 'warning');
+            return;
+        }
+        
+        const newAdjustmentRef = firebase.database().ref('users/' + userId + '/adjustments').push();
+        
+        newAdjustmentRef.set({
+            type: type,
+            description: description,
+            amount: amount,
+            date: date,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            showAlert('Ajuste registrado correctamente', 'success');
+            adjustmentForm.reset();
+            $('#adjustmentModal').modal('hide');
+        }).catch(error => {
+            console.error('Error al guardar ajuste:', error);
+            showAlert('Error al guardar ajuste', 'danger');
+        });
+    }
+    
+    // Función para mostrar alertas
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alert-container');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertContainer.appendChild(alert);
+        
+        // Auto-cerrar después de 3 segundos
+        setTimeout(() => {
+            alert.classList.remove('show');
+            setTimeout(() => {
+                alertContainer.removeChild(alert);
+            }, 150);
+        }, 3000);
+    }
 
     // Navegación entre módulos
     const navLinks = document.querySelectorAll('.nav-link[data-module]');
@@ -43,8 +325,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cerrar sesión
     document.getElementById('logout-btn').addEventListener('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('cashtrack_user');
-        window.location.href = 'index.html';
+        // Cerrar sesión en Firebase
+        firebase.auth().signOut().then(() => {
+            // Eliminar datos locales
+            localStorage.removeItem('cashtrack_user');
+            window.location.href = 'index.html';
+        }).catch((error) => {
+            console.error('Error al cerrar sesión:', error);
+        });
     });
 
     // Cambio de moneda
