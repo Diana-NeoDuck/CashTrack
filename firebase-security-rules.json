@@ -1,0 +1,288 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid",
+        "profile": {
+          ".validate": "newData.hasChildren(['name', 'email'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0"
+          },
+          "email": {
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/)"
+          },
+          "phone": {
+            ".validate": "newData.isString()"
+          },
+          "businessName": {
+            ".validate": "newData.isString()"
+          }
+        },
+        "settings": {
+          "currency": {
+            ".validate": "newData.isString() && newData.val().length > 0"
+          },
+          "taxRate": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "businessHours": {
+            ".validate": "newData.hasChildren(['open', 'close'])"
+          }
+        },
+        "initialCash": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "sales": {
+          "$saleId": {
+            ".validate": "newData.hasChildren(['date', 'total', 'status'])",
+            "date": {
+              ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+            },
+            "time": {
+              ".validate": "newData.isString()"
+            },
+            "total": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "subtotal": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "tax": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "discount": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "paymentMethod": {
+              ".validate": "newData.isString() && (newData.val() == 'cash' || newData.val() == 'card' || newData.val() == 'transfer')"
+            },
+            "status": {
+              ".validate": "newData.isString() && (newData.val() == 'completed' || newData.val() == 'pending' || newData.val() == 'canceled')"
+            },
+            "customer": {
+              "name": {
+                ".validate": "newData.isString()"
+              }
+            },
+            "items": {
+              "$itemId": {
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length > 0"
+                },
+                "quantity": {
+                  ".validate": "newData.isNumber() && newData.val() > 0"
+                },
+                "price": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0"
+                }
+              }
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        },
+        "expenses": {
+          "$expenseId": {
+            ".validate": "newData.hasChildren(['date', 'amount', 'category'])",
+            "date": {
+              ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+            },
+            "time": {
+              ".validate": "newData.isString()"
+            },
+            "amount": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "category": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "description": {
+              ".validate": "newData.isString()"
+            },
+            "vendor": {
+              ".validate": "newData.isString()"
+            },
+            "paymentMethod": {
+              ".validate": "newData.isString() && (newData.val() == 'cash' || newData.val() == 'card' || newData.val() == 'transfer')"
+            },
+            "receipt": {
+              ".validate": "newData.isString()"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        },
+        "customers": {
+          "$customerId": {
+            ".validate": "newData.hasChildren(['name'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "email": {
+              ".validate": "newData.isString()"
+            },
+            "phone": {
+              ".validate": "newData.isString()"
+            },
+            "address": {
+              ".validate": "newData.isString()"
+            },
+            "totalPurchases": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "lastPurchase": {
+              ".validate": "newData.isString()"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        },
+        "inventory": {
+          "$productId": {
+            ".validate": "newData.hasChildren(['name', 'salePrice'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "description": {
+              ".validate": "newData.isString()"
+            },
+            "category": {
+              ".validate": "newData.isString()"
+            },
+            "sku": {
+              ".validate": "newData.isString()"
+            },
+            "barcode": {
+              ".validate": "newData.isString()"
+            },
+            "costPrice": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "salePrice": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "stock": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "minStock": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "maxStock": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "supplier": {
+              ".validate": "newData.isString()"
+            },
+            "status": {
+              ".validate": "newData.isString() && (newData.val() == 'active' || newData.val() == 'inactive')"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        },
+        "inventoryAdjustments": {
+          "$adjustmentId": {
+            ".validate": "newData.hasChildren(['productId', 'type', 'adjustment'])",
+            "date": {
+              ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+            },
+            "time": {
+              ".validate": "newData.isString()"
+            },
+            "productId": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "productName": {
+              ".validate": "newData.isString()"
+            },
+            "type": {
+              ".validate": "newData.isString() && (newData.val() == 'manual' || newData.val() == 'sale' || newData.val() == 'purchase' || newData.val() == 'return')"
+            },
+            "previousStock": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "adjustment": {
+              ".validate": "newData.isNumber()"
+            },
+            "newStock": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "reason": {
+              ".validate": "newData.isString()"
+            },
+            "notes": {
+              ".validate": "newData.isString()"
+            },
+            "createdBy": {
+              ".validate": "newData.isString()"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        },
+        "dailyClosures": {
+          "$closureId": {
+            ".validate": "newData.hasChildren(['date', 'totalSales', 'totalExpenses'])",
+            "date": {
+              ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)"
+            },
+            "openingCash": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "totalSales": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "totalExpenses": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "cashSales": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "cardSales": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "transferSales": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "expectedCash": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "actualCash": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "difference": {
+              ".validate": "newData.isNumber()"
+            },
+            "notes": {
+              ".validate": "newData.isString()"
+            },
+            "status": {
+              ".validate": "newData.isString() && (newData.val() == 'completed' || newData.val() == 'pending')"
+            },
+            "createdAt": {
+              ".validate": "newData.isNumber()"
+            }
+          }
+        }
+      }
+    }
+  }
+}

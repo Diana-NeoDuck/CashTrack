@@ -1,0 +1,144 @@
+{
+  "database_structure": {
+    "users": {
+      "$userId": {
+        "profile": {
+          "name": "string",
+          "email": "string",
+          "role": "string",
+          "businessName": "string",
+          "createdAt": "timestamp",
+          "lastLogin": "timestamp"
+        },
+        "settings": {
+          "currency": "colones|dollars",
+          "taxRate": "number",
+          "businessAddress": "string",
+          "businessPhone": "string"
+        },
+        "initialCash": {
+          "amount": "number",
+          "date": "string",
+          "updatedAt": "timestamp"
+        },
+        "sales": {
+          "$saleId": {
+            "id": "string",
+            "date": "string",
+            "time": "string",
+            "customer": {
+              "id": "string",
+              "name": "string",
+              "email": "string",
+              "phone": "string"
+            },
+            "items": {
+              "$itemId": {
+                "productId": "string",
+                "name": "string",
+                "quantity": "number",
+                "unitPrice": "number",
+                "total": "number"
+              }
+            },
+            "subtotal": "number",
+            "tax": "number",
+            "discount": "number",
+            "total": "number",
+            "paymentMethod": "cash|card|transfer",
+            "status": "completed|pending|cancelled",
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+          }
+        },
+        "expenses": {
+          "$expenseId": {
+            "id": "string",
+            "date": "string",
+            "time": "string",
+            "category": "string",
+            "description": "string",
+            "amount": "number",
+            "paymentMethod": "cash|card|transfer",
+            "receipt": "string",
+            "vendor": "string",
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+          }
+        },
+        "customers": {
+          "$customerId": {
+            "id": "string",
+            "name": "string",
+            "email": "string",
+            "phone": "string",
+            "address": "string",
+            "totalPurchases": "number",
+            "lastPurchase": "string",
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+          }
+        },
+        "inventory": {
+          "$productId": {
+            "id": "string",
+            "name": "string",
+            "description": "string",
+            "category": "string",
+            "sku": "string",
+            "barcode": "string",
+            "costPrice": "number",
+            "salePrice": "number",
+            "stock": "number",
+            "minStock": "number",
+            "maxStock": "number",
+            "supplier": "string",
+            "status": "active|inactive",
+            "createdAt": "timestamp",
+            "updatedAt": "timestamp"
+          }
+        },
+        "adjustments": {
+          "$adjustmentId": {
+            "id": "string",
+            "date": "string",
+            "time": "string",
+            "type": "income|expense",
+            "amount": "number",
+            "reason": "string",
+            "description": "string",
+            "createdAt": "timestamp"
+          }
+        },
+        "dailyClosures": {
+          "$date": {
+            "date": "string",
+            "initialCash": "number",
+            "totalSales": "number",
+            "totalExpenses": "number",
+            "totalAdjustments": "number",
+            "expectedCash": "number",
+            "actualCash": "number",
+            "difference": "number",
+            "notes": "string",
+            "closedAt": "timestamp",
+            "closedBy": "string"
+          }
+        }
+      }
+    }
+  },
+  "security_rules": {
+    "rules": {
+      ".read": false,
+      ".write": false,
+      "users": {
+        "$userId": {
+          ".read": "auth != null && auth.uid == $userId",
+          ".write": "auth != null && auth.uid == $userId",
+          ".validate": "newData.hasChildren(['profile'])"
+        }
+      }
+    }
+  }
+}
